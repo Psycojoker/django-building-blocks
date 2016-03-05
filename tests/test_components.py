@@ -1,14 +1,7 @@
-from django.test.testcases import SimpleTestCase
 from building_blocks.components import DetailComponent
 
 from testapp.models import MemberSimple
-
-
-class DjangoTestUtils(SimpleTestCase):
-    def runTest(self):
-        pass
-
-django_test_utils = DjangoTestUtils()
+from .utils import django_test_utils
 
 
 member = MemberSimple()
