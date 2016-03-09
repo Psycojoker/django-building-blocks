@@ -7,3 +7,6 @@ class Field(object):
 
     def __eq__(self, other):
         return self.field == other.field and self.model == other.model
+
+    def render(self):
+        return "<b>{field.name}</b>: {field.value}".format(field=self)

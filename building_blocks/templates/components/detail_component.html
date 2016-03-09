@@ -1,5 +1,5 @@
 <h2>{{ component.model }}</h2>
 
 {% for field in component.fields %}
-<p><b>{{ field.name }}</b>: {{ field.value }}</p>
+<p>{{ field.render|safe }}</p>
 {% endfor %}
