@@ -1,5 +1,7 @@
 from django.template.loader import get_template
 
+from .fields import Field
+
 
 class Component(object):
     def render(self):
@@ -23,7 +25,4 @@ class DetailComponent(Component):
             if i.primary_key:
                 continue
 
-            yield {
-                "name": i.verbose_name.capitalize(),
-                "value": getattr(self.model, i.get_attname()),
-            }
+            yield Field(i, model=self.model)

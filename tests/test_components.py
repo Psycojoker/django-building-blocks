@@ -1,4 +1,5 @@
 from building_blocks.components import DetailComponent
+from building_blocks.fields import Field
 
 from testapp.models import MemberSimple
 from .utils import django_test_utils
@@ -17,8 +18,8 @@ def test_detail_component_fields():
     fields = list(DetailComponent(model=member).fields())
 
     expected_fields = [
-        {"name": "First name", "value": "Bill"},
-        {"name": "Last name", "value": "Gates"},
+        Field(member._meta.fields[1], member),
+        Field(member._meta.fields[2], member),
     ]
 
     assert fields == expected_fields
