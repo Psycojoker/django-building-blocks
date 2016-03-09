@@ -15,6 +15,13 @@ def test_detail_component_init():
 
 
 def test_detail_component_fields():
+    def fields_are_equal(a, b):
+        for i, j in zip(a, b):
+            if not i.field == j.field and i.model == j.model:
+                return False
+
+        return True
+
     fields = list(DetailComponent(model=member).fields())
 
     expected_fields = [
@@ -22,7 +29,7 @@ def test_detail_component_fields():
         Field(member._meta.fields[2], member),
     ]
 
-    assert fields == expected_fields
+    assert fields_are_equal(fields, expected_fields)
 
 
 def test_detail_component_render():
