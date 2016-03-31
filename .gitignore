@@ -1,0 +1,4 @@
+*.pyc
+secret.txt
+ve
+.cache
