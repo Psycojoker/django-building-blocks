@@ -1,4 +1,4 @@
-**NOTHING BELLOW IS IMPLEMENTED YET**. Those are more notes for me.
+**NEARLY NOTHING BELLOW IS IMPLEMENTED YET**. Those are more notes for me.
 
 # Objective
 
