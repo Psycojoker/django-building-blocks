@@ -17,6 +17,27 @@ from .fields import Field
 #     # post render ?
 #     # return
 
+def add_function(kind):
+    def wrap(function):
+        setattr(function, f"__add_{kind}__", True)
+        return function
+    return wrap
+
+pre_call = add_function("pre_call")
+pre_body = add_function("pre_body")
+body = add_function("body")
+post_body = add_function("post_body")
+post_render_template = add_function("post_render_template")
+
+VIEW_STEPS = (
+    "pre_call",
+    "pre_body",
+    "body",
+    "post_body",
+    "post_render_template",
+)
+
+
 class View:
     template_name = None
     template_names = []
@@ -24,6 +45,15 @@ class View:
     name = None
 
     components = []
+
+    def __init__(self, *args, **kwargs):
+        for attribute in dir(self):
+            attribute = getattr(self, attribute)
+            for view_step in VIEW_STEPS:
+                if hasattr(attribute, f"__add_{view_step}__"):
+                    getattr(self, f"{view_step}_functions").append(attribute)
+                    # clean behind ourself
+                    # delattr(attribute, f"__add_{view_step}__")
 
     # view workflow
     def __call__(self, request, *args, **kwargs):
@@ -88,36 +118,6 @@ class View:
     body_functions = []
     post_body_functions = []
     post_render_template_functions = []
-
-    def add_pre_call(self):
-        def wrap(function):
-            self.pre_call_functions.append(function)
-            return function
-        return wrap
-
-    def add_pre_body(self):
-        def wrap(function):
-            self.pre_body_functions.append(function)
-            return function
-        return wrap
-
-    def add_body(self):
-        def wrap(function):
-            self.body_functions.append(function)
-            return function
-        return wrap
-
-    def add_post_body(self):
-        def wrap(function):
-            self.post_body_functions.append(function)
-            return function
-        return wrap
-
-    def add_post_render_template(self):
-        def wrap(function):
-            self.post_render_template_functions.append(function)
-            return function
-        return wrap
 
     def get_template_names(self):
         template_names = []
@@ -201,6 +201,7 @@ class View:
 # objectif: Model(Organization) + Model(User)
 class Model(View):
     def __init__(self, model):
+        super().__init__()
         self.model = model
 
         self.template_names = [
@@ -209,7 +210,7 @@ class Model(View):
             "generic/model.html",
         ]
 
-    @View.add_body
+    @body
     def get_object(self, request, context, *args, **kwargs):
         key = None
         # TODO allow custom name
@@ -240,6 +241,8 @@ class Model(View):
 
 class Query(View):
     def __init__(self, query):
+        super().__init__()
+
         if isinstance(query, DjangoModel):
             query = query.objects.all()
 
