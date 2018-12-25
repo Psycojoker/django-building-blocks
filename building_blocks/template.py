@@ -1,5 +1,5 @@
 import os
-from base import View
+from building_blocks.base import View
 
 
 class Template(View):

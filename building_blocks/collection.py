@@ -1,5 +1,5 @@
-from base import Model
-from url import to_url
+from building_blocks.base import Model
+from building_blocks.url import to_url
 
 
 class Collection:
