@@ -1,5 +1,5 @@
 from django.template.loader import select_template
-from django.db.models import Model as DjangoModel
+from django.db.models.base import ModelBase as DjangoModel
 from django.http import HttpResponse
 
 from .fields import Field
