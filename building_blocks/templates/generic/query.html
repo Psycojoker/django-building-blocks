@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ model_name }}s</h1>
+
+<ul>
+{% for object in query %}
+<li>{{ object }}</li>
+{% endfor %}
+</ul>
+{% endblock %}
