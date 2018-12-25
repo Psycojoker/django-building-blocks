@@ -1,5 +1,6 @@
 from django.template.loader import select_template
 from django.db.models import Model as DjangoModel
+from django.http import HttpResponse
 
 from .fields import Field
 
@@ -45,7 +46,7 @@ class View:
         # if you ever need to modify the template
         template = self.post_render_template(request, context, template, *args, **kwargs)
 
-        return template
+        return HttpResponse(template)
 
     def pre_call(self, request, context, *args, **kwargs):
         for function in self.pre_call_functions:
