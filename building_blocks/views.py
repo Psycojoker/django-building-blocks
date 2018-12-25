@@ -1,4 +1,5 @@
 from django.template.loader import select_template
+from django.db.models import Model as DjangoModel
 
 from .fields import Field
 
@@ -46,26 +47,26 @@ class View:
 
         return template
 
-    def pre_call(request, context, *args, **kwargs):
-        for function in pre_call_functions:
+    def pre_call(self, request, context, *args, **kwargs):
+        for function in self.pre_call_functions:
             context = function(request, context, args, kwargs)
 
         return context
 
-    def pre_body(request, context, *args, **kwargs):
-        for function in pre_body_functions:
+    def pre_body(self, request, context, *args, **kwargs):
+        for function in self.pre_body_functions:
             context = function(request, context, args, kwargs)
 
         return context
 
-    def body(request, context, *args, **kwargs):
-        for function in body_functions:
+    def body(self, request, context, *args, **kwargs):
+        for function in self.body_functions:
             context = function(request, context, args, kwargs)
 
         return context
 
-    def post_body(request, context, *args, **kwargs):
-        for function in post_body_functions:
+    def post_body(self, request, context, *args, **kwargs):
+        for function in self.post_body_functions:
             context = function(request, context, args, kwargs)
 
         return context
@@ -74,8 +75,8 @@ class View:
         template = select_template(self.get_template_names())
         return template.render(self.get_context_data(), request=request)
 
-    def post_render_template(request, context, template, *args, **kwargs):
-        for function in post_render_template_functions:
+    def post_render_template(self, request, context, template, *args, **kwargs):
+        for function in self.post_render_template_functions:
             context = function(request, context, args, kwargs)
 
         return context
@@ -87,31 +88,31 @@ class View:
     post_body_functions = []
     post_render_template_functions = []
 
-    def pre_call(self):
+    def add_pre_call(self):
         def wrap(function):
             self.pre_call_functions.append(function)
             return function
         return wrap
 
-    def pre_body(self):
+    def add_pre_body(self):
         def wrap(function):
             self.pre_body_functions.append(function)
             return function
         return wrap
 
-    def body(self):
+    def add_body(self):
         def wrap(function):
             self.body_functions.append(function)
             return function
         return wrap
 
-    def post_body(self):
+    def add_post_body(self):
         def wrap(function):
             self.post_body_functions.append(function)
             return function
         return wrap
 
-    def post_render_template(self):
+    def add_post_render_template(self):
         def wrap(function):
             self.post_render_template_functions.append(function)
             return function
@@ -119,7 +120,7 @@ class View:
 
     def get_template_names(self):
         template_names = []
-        if template_name:
+        if self.template_name:
             template_names.append(self.template_name)
 
         if self.template_names:
@@ -201,7 +202,7 @@ class Model(View):
     def __init__(self, model):
         self.model = model
 
-    @View.body
+    @View.add_body
     def get_object(self, request, context, *args, **kwargs):
         key = None
         # TODO allow custom name
