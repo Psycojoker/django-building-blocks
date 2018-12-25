@@ -202,6 +202,12 @@ class Model(View):
     def __init__(self, model):
         self.model = model
 
+        self.template_names = [
+            # XXX allow to overwrite that
+            f"{self.model._meta.app_label}/{self.model._meta.model_name}_detail.html",
+            "generic/model.html",
+        ]
+
     @View.add_body
     def get_object(self, request, context, *args, **kwargs):
         key = None
@@ -237,3 +243,9 @@ class Query(View):
             query = query.objects.all()
 
         self.query = query
+
+        self.template_names = [
+            # XXX allow to overwrite that
+            f"{self.query._meta.app_label}/{self.query._meta.model_name}_list.html",
+            "generic/query.html",
+        ]
