@@ -214,7 +214,7 @@ class Model(View):
     def get_object(self, request, context, *args, **kwargs):
         key = None
         # TODO allow custom name
-        for potential_key in (f"{model._meta.model_name}_pk", "pk", "id"):
+        for potential_key in (f"{self.model._meta.model_name}_pk", "pk", "id"):
             if potential_key in kwargs:
                 object_id = kwargs[potential_key]
                 del kwargs[object_id]  # remove it so we avoid colision with other Model/Query/Other
@@ -250,6 +250,23 @@ class Query(View):
 
         self.template_names = [
             # XXX allow to overwrite that
-            f"{self.query._meta.app_label}/{self.query._meta.model_name}_list.html",
+            f"{self.query.model._meta.app_label}/{self.query.model._meta.model_name}_list.html",
             "generic/query.html",
         ]
+
+    @body
+    def get_query(self, request, context, *args, **kwargs):
+        # only declare yourself as "query" if I'm the first
+        if "query" not in context:
+            context["query"] = self.query
+
+        if "model_name" not in context:
+            context["model_name"] = self.query.model._meta.model_name
+
+        print(context)
+
+        # XXX what to do when shadowing something in the context?
+        # TODO allow custom/additional names
+        context[f"{self.query.model._meta.model_name}s"] = self.query
+
+        return context
