@@ -80,7 +80,7 @@ class View:
         for function in self.post_render_template_functions:
             context = function(request, context, args, kwargs)
 
-        return context
+        return template
 
     # view functions aggregation
     pre_call_functions = []
