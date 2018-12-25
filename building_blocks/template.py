@@ -47,7 +47,7 @@ class Decorator:
 class AnotherTemplateExtension(Decorator):
     extension = None
 
-    def __init__(self, extension=None, strict=False)
+    def __init__(self, extension=None, strict=False):
         # this allow class variable declaration/overwriting
         self.extension = extension if extension else self.extension
         self.strict = strict
