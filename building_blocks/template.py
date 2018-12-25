@@ -1,3 +1,4 @@
+import os
 from base import View
 
 
@@ -16,6 +17,18 @@ class Template(View):
 
             if strict:  # clear all template names possibilities
                 self.template_names = []
+
+    def get_url_name(self):
+        "self.name or '/path/to/some_template.html' → 'some_template'"
+
+        if self.name:
+            return self.name
+
+        template_name = self.get_template_names()[0]
+        return os.path.splitext(template_name.split("/")[-1])[0]
+
+    def get_url(self):
+        return f"{self.get_view_name()}/"
 
 
 class Decorator:

@@ -18,8 +18,10 @@ from .fields import Field
 class View:
     template_name = None
     template_names = []
+    url = None
+    name = None
 
-    self.components = []
+    components = []
 
     # view workflow
     def __call__(self, request, *args, **kwargs):
@@ -136,6 +138,63 @@ class View:
         self.post_body_functions += other.post_body_functions
         self.post_render_template_functions += other.post_render_template_functions
 
+    def get_url_name(self):
+        if not self.components:
+            components = [self]
+        else:
+            components = self.components
+
+        def join(a, b):
+            if not a.endswith("_"):
+                a += "_"
+
+            if b.startswith("_"):
+                b = b[1:]
+
+            return a + b
+
+        url_name = ""
+        for component in components:
+            if component.name:
+                name_to_add = component.name
+            elif hasattr(component, "get_url_name"):
+                name_to_add = component.get_url_name()
+            else:
+                raise NotImplementedError(f"Component '{self.__class__.__name__}' doesn't implement the url name interface nor provide a name attribute")
+
+            url_name = join(url_name, name_to_add)
+
+        return url_name
+
+
+    def get_url_path(self):
+        if not self.components:
+            components = [self]
+        else:
+            components = self.components
+
+        def join(a, b):
+            if not a.endswith("/"):
+                a += "/"
+
+            if b.startswith("/"):
+                b = b[1:]
+
+            return a + b
+
+        url_path = ""
+        for component in components:
+            if component.url:
+                path_to_add = component.url
+            elif hasattr(component, "get_url"):
+                path_to_add = component.get_url()
+            else:
+                raise NotImplementedError("Component '{self.__class__.__name__}' doesn't implement the interface to generate a url path")
+
+            url_path = join(url_path, path_to_add)
+
+        return url_path
+
 
 # objectif: Model(Organization) + Model(User)
 class Model(View):
@@ -146,7 +205,7 @@ class Model(View):
     def get_object(self, request, context, *args, **kwargs):
         key = None
         # TODO allow custom name
-        for potential_key in (f"{model._meta.name}_pk", "pk", "id"):
+        for potential_key in (f"{model._meta.model_name}_pk", "pk", "id"):
             if potential_key in kwargs:
                 object_id = kwargs[potential_key]
                 del kwargs[object_id]  # remove it so we avoid colision with other Model/Query/Other
@@ -160,6 +219,12 @@ class Model(View):
 
         # XXX what to do when shadowing something in the context?
         # TODO allow custom/additional names
-        context[f"{model._meta.name}"] = object_
+        context[f"{model._meta.model_name}"] = object_
 
         return context
+
+    def get_url_name(self):
+        return f"{self.mode._name.model_name}_detail"
+
+    def get_url(self):
+        return f"{self.model._meta.model_name}/<int:{self.model._meta.model_name}>_pk>/"
