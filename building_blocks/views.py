@@ -74,7 +74,7 @@ class View:
 
     def render_template(self, request, context, *args, **kwargs):
         template = select_template(self.get_template_names())
-        return template.render(self.get_context_data(), request=request)
+        return template.render(context, request=request)
 
     def post_render_template(self, request, context, template, *args, **kwargs):
         for function in self.post_render_template_functions:
