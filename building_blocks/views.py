@@ -229,3 +229,11 @@ class Model(View):
 
     def get_url(self):
         return f"{self.model._meta.model_name}/<int:{self.model._meta.model_name}>_pk>/"
+
+
+class Query(View):
+    def __init__(self, query):
+        if isinstance(query, DjangoModel):
+            query = query.objects.all()
+
+        self.query = query
