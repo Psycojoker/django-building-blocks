@@ -275,3 +275,36 @@ class Query(View):
         context[f"{self.query.model._meta.model_name}s"] = self.query
 
         return context
+
+
+class Spliter(View):
+    def __init__(self, *, get=None, post=None, put=None, patch=None, delete=None, connect=None, options=None, trace=None,
+                 *args, **kwargs):
+        super(Spliter, self).__init__(*args, **kwargs)
+
+        verbs = {
+            "get": get,
+            "post": post,
+            "put": put,
+            "patch": patch,
+            "delete": delete,
+            "connect": connect,
+            "options": options,
+            "trace": trace,
+        }
+
+        # check that we have at least one view
+        if not any(verbs.items()):
+            raise Exception("Spliter needs at least one view for one http verb (get, post, put, patch, delete, connect, options, trace)")
+
+        for name, verb in verbs.items():
+            setattr(self, name, verb)
+
+    def __call__(self, request, *args, **kwargs):
+        verb = request.method.lower()
+        view = getattr(self, verb)
+
+        if not view:
+            return HttpResponseBadRequest()
+
+        return view(request, *args, **kwargs)
