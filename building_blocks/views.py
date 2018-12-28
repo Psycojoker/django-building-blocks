@@ -129,7 +129,7 @@ class View:
 
         return template_names
 
-    def __add__(self, other):
+    def merge_with(self, other):
         if not self.components:
             self.components = [self]
         self.components.append(other)
@@ -139,6 +139,10 @@ class View:
         self.body_functions += other.body_functions
         self.post_body_functions += other.post_body_functions
         self.post_render_template_functions += other.post_render_template_functions
+
+    def __add__(self, other):
+        # it is reverse so the other view can modify more behavior
+        other.merge_with(self)
 
     def get_url_name(self):
         if not self.components:
