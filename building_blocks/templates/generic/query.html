@@ -6,6 +6,8 @@
 <ul>
 {% for object in query %}
 <li>{{ object }}</li>
+{% empty %}
+<p>There is no {{ model_name }} yet.</p>
 {% endfor %}
 </ul>
 {% endblock %}
