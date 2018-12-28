@@ -47,6 +47,7 @@ class View:
     components = []
 
     def __init__(self, *args, **kwargs):
+        # gather all view additional functions
         for attribute in dir(self):
             attribute = getattr(self, attribute)
             for view_step in VIEW_STEPS:
