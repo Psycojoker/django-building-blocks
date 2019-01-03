@@ -4,6 +4,14 @@ from django.http import HttpResponse
 
 from .fields import Field
 
+# TODO
+# * json, xml, yaml, api
+# * Model(Brol).createOn() ou .linkTo ?
+# * permission
+# * create
+# * update
+# * delete
+
 # notes:
 # * handling different http verbs like GET/POST/PUT/DELETE
 
